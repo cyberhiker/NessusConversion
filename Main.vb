@@ -2,6 +2,7 @@
 Imports System.Threading
 Imports System.Xml
 Imports Microsoft.Office.Interop
+Imports System.Collections.Specialized
 
 Module NessusConversion
 
@@ -389,43 +390,55 @@ Module NessusConversion
 
         AddInfoToBox("Selecting Sheet " & ThisSheet)
 
-        oExcel.Cells(RowCount(ThisSheet), 1).Value = pluginID
+        'Parsing out the Compliance Report
 
-        Select Case severity
-            Case 4
-                severityName = "Critical"
-            Case 3
-                severityName = "High"
-            Case 2
-                severityName = "Medium"
-            Case 1
-                severityName = "Low"
-            Case 0
-                severityName = "Informational"
-            Case Else
-                severityName = "Other"
-        End Select
+        If pluginID = Configuration.ConfigurationManager.AppSettings("ComplianceAuditIDWindows") _
+            Or pluginID = Configuration.ConfigurationManager.AppSettings("ComplianceAuditIDUnix") Then
 
-        oExcel.Cells(RowCount(ThisSheet), 2).Value = severityName
-        oExcel.Cells(RowCount(ThisSheet), 3).Value = pluginName
-        oExcel.Cells(RowCount(ThisSheet), 4).Value = strSummary
-        oExcel.Cells(RowCount(ThisSheet), 5).Value = port
-        oExcel.Cells(RowCount(ThisSheet), 6).Value = AffectedSystem
-        oExcel.Cells(RowCount(ThisSheet), 7).Value = "Lookup"
-        oRng = oExcel.Range("G" & RowCount(ThisSheet))
+            'Begin custom handling of Audit Report
+            AddInfoToBox("This result is a compliance check")
 
-        Try
-            oSheet.Hyperlinks.Add _
-             (oRng, "http://www.nessus.org/plugins/index.php?view=single&id=" & pluginID)
 
-        Catch ex As Exception
-            MsgBox("Hyperlink could not be added.", MsgBoxStyle.Exclamation, "Excel Error")
-            AddInfoToBox(ex.Message)
-        End Try
 
-        'If this is a finding with a justification, enter that justification on the sheet.
-        If ThisSheet = 3 Then
-            oExcel.Cells(RowCount(ThisSheet), 8).Value = Justification
+        Else
+            oExcel.Cells(RowCount(ThisSheet), 1).Value = pluginID
+
+            Select Case severity
+                Case 4
+                    severityName = "Critical"
+                Case 3
+                    severityName = "High"
+                Case 2
+                    severityName = "Medium"
+                Case 1
+                    severityName = "Low"
+                Case 0
+                    severityName = "Informational"
+                Case Else
+                    severityName = "Other"
+            End Select
+
+            oExcel.Cells(RowCount(ThisSheet), 2).Value = severityName
+            oExcel.Cells(RowCount(ThisSheet), 3).Value = pluginName
+            oExcel.Cells(RowCount(ThisSheet), 4).Value = strSummary
+            oExcel.Cells(RowCount(ThisSheet), 5).Value = port
+            oExcel.Cells(RowCount(ThisSheet), 6).Value = AffectedSystem
+            oExcel.Cells(RowCount(ThisSheet), 7).Value = "Lookup"
+            oRng = oExcel.Range("G" & RowCount(ThisSheet))
+
+            Try
+                oSheet.Hyperlinks.Add _
+                 (oRng, "http://www.nessus.org/plugins/index.php?view=single&id=" & pluginID)
+
+            Catch ex As Exception
+                MsgBox("Hyperlink could not be added.", MsgBoxStyle.Exclamation, "Excel Error")
+                AddInfoToBox(ex.Message)
+            End Try
+
+            'If this is a finding with a justification, enter that justification on the sheet.
+            If ThisSheet = 3 Then
+                oExcel.Cells(RowCount(ThisSheet), 8).Value = Justification
+            End If
         End If
 
         RowCount(ThisSheet) += 1
@@ -525,7 +538,7 @@ Module NessusConversion
                                                                  Version:=Excel.XlPivotTableVersionList.xlPivotTableVersion14)
 
         Dim myPivots As Excel.PivotTables = xlDestWSheet.PivotTables
-        Dim ptTable As Excel.PivotTable = myPivots.Add(PivotCache:=ptCache, TableDestination:=xlDestRange) 
+        Dim ptTable As Excel.PivotTable = myPivots.Add(PivotCache:=ptCache, TableDestination:=xlDestRange)
 
         oExcel.Sheets(1).Select()
 
