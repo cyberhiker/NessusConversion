@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NessusConversion", "NessusConversion.vbproj", "{95ED585F-B323-47D8-944D-E2A6DF2A0F69}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NessusConversion", "NessusConversion.vbproj", "{A0F6FDE1-DE61-4266-B05D-60A3353B2C2C}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "NessusConvertSetup", "..\NessusToExcelSetup\NessusToExcelSetup.vdproj", "{0D1C6A43-5B94-4611-B7F1-DC0F36DB5C41}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "NessusConversionSetup", "..\NessusConversionSetup\NessusConversionSetup.vdproj", "{12D2FF96-FD43-4C1C-BDCA-768E8D5FA61A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,14 +11,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{95ED585F-B323-47D8-944D-E2A6DF2A0F69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{95ED585F-B323-47D8-944D-E2A6DF2A0F69}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{95ED585F-B323-47D8-944D-E2A6DF2A0F69}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{95ED585F-B323-47D8-944D-E2A6DF2A0F69}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D1C6A43-5B94-4611-B7F1-DC0F36DB5C41}.Debug|Any CPU.ActiveCfg = Debug
-		{0D1C6A43-5B94-4611-B7F1-DC0F36DB5C41}.Debug|Any CPU.Build.0 = Debug
-		{0D1C6A43-5B94-4611-B7F1-DC0F36DB5C41}.Release|Any CPU.ActiveCfg = Release
-		{0D1C6A43-5B94-4611-B7F1-DC0F36DB5C41}.Release|Any CPU.Build.0 = Release
+		{A0F6FDE1-DE61-4266-B05D-60A3353B2C2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0F6FDE1-DE61-4266-B05D-60A3353B2C2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0F6FDE1-DE61-4266-B05D-60A3353B2C2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0F6FDE1-DE61-4266-B05D-60A3353B2C2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12D2FF96-FD43-4C1C-BDCA-768E8D5FA61A}.Debug|Any CPU.ActiveCfg = Debug
+		{12D2FF96-FD43-4C1C-BDCA-768E8D5FA61A}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

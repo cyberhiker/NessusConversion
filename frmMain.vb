@@ -65,13 +65,27 @@ Public Class frmMain
             Exit Sub
         End If
 
+        FileFormat = ComboBox1.SelectedItem.ToString
+
         Select Case FileFormat.ToLower
-            Case "csv" Or "tsv"
+            Case "csv"
+                NessusConversion.FileFormat = "csv"
                 t = New Thread(AddressOf NessusConversion.ConvertPlainText)
-            Case "xls" Or "xlsx"
+            Case "tsv"
+                NessusConversion.FileFormat = "tsv"
+                t = New Thread(AddressOf NessusConversion.ConvertPlainText)
+            Case "xls"
+                NessusConversion.FileFormat = "xls"
+                t = New Thread(AddressOf NessusConversion.ConvertExcel)
+            Case "xlsx"
+                NessusConversion.FileFormat = "xlsx"
+                t = New Thread(AddressOf NessusConversion.ConvertExcel)
+            Case "excel"
+                NessusConversion.FileFormat = "xlsx"
                 t = New Thread(AddressOf NessusConversion.ConvertExcel)
             Case Else
-                AddInfoToBox("File format not recognized")
+                AddInfoToBox("File format (" & FileFormat & ") not recognized")
+                Exit Sub
         End Select
 
         t.Start()
@@ -79,7 +93,7 @@ Public Class frmMain
     End Sub
 
     Private Sub AboutToolStripMenuItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AboutToolStripMenuItem1.Click
-        Dim AboutBox1 As New NessusToExcel.AboutBox1
+        Dim AboutBox1 As New AboutBox1
         AboutBox1.ShowDialog()
     End Sub
 

@@ -37,7 +37,6 @@ Partial Class frmMain
         Me.toolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AboutToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.txtStatus = New System.Windows.Forms.TextBox()
         Me.btnGo = New System.Windows.Forms.Button()
         Me.dlgFolderSelect = New System.Windows.Forms.FolderBrowserDialog()
         Me.dlgFileSave = New System.Windows.Forms.SaveFileDialog()
@@ -53,6 +52,7 @@ Partial Class frmMain
         Me.Port = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.IPAddress = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.btnJustify = New System.Windows.Forms.Button()
+        Me.ComboBox1 = New System.Windows.Forms.ComboBox()
         Me.ToolStrip1.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -165,19 +165,6 @@ Partial Class frmMain
         Me.AboutToolStripMenuItem1.Size = New System.Drawing.Size(48, 20)
         Me.AboutToolStripMenuItem1.Text = "About"
         '
-        'txtStatus
-        '
-        Me.txtStatus.AcceptsReturn = True
-        Me.txtStatus.Location = New System.Drawing.Point(12, 314)
-        Me.txtStatus.MaxLength = 2000000
-        Me.txtStatus.Multiline = True
-        Me.txtStatus.Name = "txtStatus"
-        Me.txtStatus.ReadOnly = True
-        Me.txtStatus.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me.txtStatus.Size = New System.Drawing.Size(1008, 99)
-        Me.txtStatus.TabIndex = 2
-        Me.txtStatus.WordWrap = False
-        '
         'btnGo
         '
         Me.btnGo.Location = New System.Drawing.Point(289, 52)
@@ -284,11 +271,21 @@ Partial Class frmMain
         Me.btnJustify.Text = "Create Justification Text"
         Me.btnJustify.UseVisualStyleBackColor = True
         '
+        'ComboBox1
+        '
+        Me.ComboBox1.FormattingEnabled = True
+        Me.ComboBox1.Items.AddRange(New Object() {"CSV", "TSV", "Excel"})
+        Me.ComboBox1.Location = New System.Drawing.Point(86, 27)
+        Me.ComboBox1.Name = "ComboBox1"
+        Me.ComboBox1.Size = New System.Drawing.Size(121, 21)
+        Me.ComboBox1.TabIndex = 10
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1032, 425)
+        Me.ClientSize = New System.Drawing.Size(1032, 317)
+        Me.Controls.Add(Me.ComboBox1)
         Me.Controls.Add(Me.btnJustify)
         Me.Controls.Add(Me.DataGridView1)
         Me.Controls.Add(Me.btnCancel)
@@ -296,9 +293,9 @@ Partial Class frmMain
         Me.Controls.Add(Me.txtSystem)
         Me.Controls.Add(Me.btnClearLog)
         Me.Controls.Add(Me.btnGo)
-        Me.Controls.Add(Me.txtStatus)
         Me.Controls.Add(Me.ToolStrip1)
         Me.Controls.Add(Me.MenuStrip1)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MainMenuStrip = Me.MenuStrip1
         Me.Name = "frmMain"
         Me.Text = "Nessus to Excel Converter"
@@ -321,7 +318,6 @@ Partial Class frmMain
     Friend WithEvents SaveToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents toolStripSeparator3 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents ExitToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents txtStatus As System.Windows.Forms.TextBox
     Friend WithEvents btnGo As System.Windows.Forms.Button
     Friend WithEvents dlgFolderSelect As System.Windows.Forms.FolderBrowserDialog
     Friend WithEvents dlgFileSave As System.Windows.Forms.SaveFileDialog
@@ -341,5 +337,6 @@ Partial Class frmMain
     Friend WithEvents Port As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents IPAddress As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents btnJustify As System.Windows.Forms.Button
+    Friend WithEvents ComboBox1 As System.Windows.Forms.ComboBox
 
 End Class
