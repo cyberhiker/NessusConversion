@@ -2,6 +2,7 @@
 Imports System.Threading
 Imports System.Xml
 Imports Microsoft.Office.Interop
+Imports System.Collections.Specialized
 
 Module NessusConversion
 
@@ -24,139 +25,137 @@ Module NessusConversion
         Dim arrArgs = My.Application.CommandLineArgs
         Dim CarryOn As Boolean = False
 
-        If arrArgs.Count = 4 Or arrArgs.Count = 5 Then
-            For i = 0 To arrArgs.Count - 1
-                Select Case True
-                    Case arrArgs(i).ToLower.StartsWith("/d")
-                        Try
-                            Dim colonPlace As Integer = arrArgs.Item(i).IndexOf(":") + 1
-                            strFolder = arrArgs.Item(i).Substring(colonPlace, arrArgs.Item(i).Length - colonPlace)
+        For i = 0 To arrArgs.Count - 1
+            Select Case True
+                Case arrArgs(i).ToLower.StartsWith("/d")
+                    Try
+                        Dim colonPlace As Integer = arrArgs.Item(i).IndexOf(":") + 1
+                        strFolder = arrArgs.Item(i).Substring(colonPlace, arrArgs.Item(i).Length - colonPlace)
 
-                        Catch e As Exception
-                            ShowHelp("Folder path not correctly identified.")
-                            Exit Sub
-                        End Try
-
-                        If Not Directory.Exists(strFolder) Then
-                            ShowHelp("Folder path (" & strFolder & ") not found.")
-                            Exit Sub
-                        End If
-
-                    Case arrArgs(i).ToLower.StartsWith("/e")
-                        Try
-                            Dim colonPlace As Integer = arrArgs.Item(i).IndexOf(":") + 1
-                            strEnv = arrArgs.Item(i).Substring(colonPlace, arrArgs.Item(i).Length - colonPlace)
-                            strEnv.Replace("\", " ").Replace("/", " ").Replace(":", " ").Replace("?", " ").Replace("*", " ").Replace("[", " ").Replace("]", " ")
-
-                        Catch e As Exception
-                            ShowHelp("Environment name not correctly identified.")
-                            Exit Sub
-                        End Try
-
-                        If strEnv = "" Then
-                            ShowHelp("Environment name invalid.")
-                            Exit Sub
-                        ElseIf strEnv.Length > 13 Then
-                            Console.WriteLine("Environment name is longer than 13 characters, it will be truncated.")
-                        End If
-
-
-                    Case arrArgs(i).ToLower.StartsWith("/x")
-                        Try
-                            Dim colonPlace As Integer = arrArgs.Item(i).IndexOf(":") + 1
-                            strFile = arrArgs.Item(i).Substring(colonPlace, arrArgs.Item(i).Length - colonPlace)
-
-                        Catch e As Exception
-                            ShowHelp("Exclusion file path not correctly identified.")
-                            Exit Sub
-                        End Try
-
-                        If Not File.Exists(strFile) Then
-                            ShowHelp("Exclusion file (" & strFile & ") not found.")
-                            Exit Sub
-                        End If
-
-                    Case arrArgs(i).ToLower.StartsWith("/o")
-                        Try
-                            Dim colonPlace As Integer = arrArgs.Item(i).IndexOf(":") + 1
-                            OutputFile = arrArgs.Item(i).Substring(colonPlace, arrArgs.Item(i).Length - colonPlace)
-
-                        Catch e As Exception
-                            ShowHelp("Excel output file path not correctly identified.")
-                            Exit Sub
-                        End Try
-
-                        If File.Exists(OutputFile) Then
-                            ShowHelp("Excel output file (" & OutputFile & ") already exists.")
-                            Exit Sub
-                        End If
-
-                    Case arrArgs(i).ToLower.StartsWith("/f")
-                        Try
-                            Dim colonPlace As Integer = arrArgs.Item(i).IndexOf(":") + 1
-                            FileFormat = arrArgs.Item(i).Substring(colonPlace, arrArgs.Item(i).Length - colonPlace)
-
-                        Catch e As Exception
-                            ShowHelp("File Format not correctly identified.")
-                            Exit Sub
-                        End Try
-
-                        If FileFormat.ToLower <> "xls" Or FileFormat.ToLower <> "xlsx" Or FileFormat.ToLower <> "csv" Or FileFormat.ToLower <> "tsv" Then
-                            ShowHelp("File format provided is not available.  Options are: xls, csv or tsv.")
-                            Exit Sub
-                        End If
-                        
-                    Case arrArgs(i).ToLower.StartsWith("/y")
-                        CarryOn = True
-
-                    Case Else
-                        ShowHelp()
+                    Catch e As Exception
+                        ShowHelp("Folder path not correctly identified.")
                         Exit Sub
+                    End Try
 
-                End Select
-            Next
-
-            If Not CarryOn Then
-                Dim line As String
-                Console.WriteLine()
-                Console.WriteLine("Using Directory: " & strFolder)
-                Console.WriteLine("Using Exclusion File: " & strFile)
-                Console.WriteLine("Using Env: " & strEnv)
-                Console.WriteLine("Output File Path: " & OutputFile)
-
-                Do
-                    Console.Write("Are these values correct? (y/n)")
-                    line = Console.ReadLine()
-                    If Not line.ToLower.StartsWith("y") Then
-                        Console.WriteLine("Answer is not yes... Exiting.")
+                    If Not Directory.Exists(strFolder) Then
+                        ShowHelp("Folder path (" & strFolder & ") not found.")
                         Exit Sub
                     End If
-                Loop While line Is Nothing
-            End If
 
-            Select Case FileFormat.ToLower
-                Case "csv" Or "tsv"
-                    ConvertPlainText()
-                Case "xls" Or "xlsx"
-                    ConvertExcel()
+                Case arrArgs(i).ToLower.StartsWith("/e")
+                    Try
+                        Dim colonPlace As Integer = arrArgs.Item(i).IndexOf(":") + 1
+                        strEnv = arrArgs.Item(i).Substring(colonPlace, arrArgs.Item(i).Length - colonPlace)
+                        strEnv.Replace("\", " ").Replace("/", " ").Replace(":", " ").Replace("?", " ").Replace("*", " ").Replace("[", " ").Replace("]", " ")
+
+                    Catch e As Exception
+                        ShowHelp("Environment name not correctly identified.")
+                        Exit Sub
+                    End Try
+
+                    If strEnv = "" Then
+                        ShowHelp("Environment name invalid.")
+                        Exit Sub
+                    ElseIf strEnv.Length > 13 Then
+                        Console.WriteLine("Environment name is longer than 13 characters, it will be truncated.")
+                    End If
+
+
+                Case arrArgs(i).ToLower.StartsWith("/x")
+                    Try
+                        Dim colonPlace As Integer = arrArgs.Item(i).IndexOf(":") + 1
+                        strFile = arrArgs.Item(i).Substring(colonPlace, arrArgs.Item(i).Length - colonPlace)
+
+                    Catch e As Exception
+                        ShowHelp("Exclusion file path not correctly identified.")
+                        Exit Sub
+                    End Try
+
+                    If Not File.Exists(strFile) Then
+                        ShowHelp("Exclusion file (" & strFile & ") not found.")
+                        Exit Sub
+                    End If
+
+                Case arrArgs(i).ToLower.StartsWith("/o")
+                    Try
+                        Dim colonPlace As Integer = arrArgs.Item(i).IndexOf(":") + 1
+                        OutputFile = arrArgs.Item(i).Substring(colonPlace, arrArgs.Item(i).Length - colonPlace)
+
+                    Catch e As Exception
+                        ShowHelp("Excel output file path not correctly identified.")
+                        Exit Sub
+                    End Try
+
+                    If File.Exists(OutputFile) Then
+                        ShowHelp("Excel output file (" & OutputFile & ") already exists.")
+                        Exit Sub
+                    End If
+
+                Case arrArgs(i).ToLower.StartsWith("/f")
+                    Try
+                        Dim colonPlace As Integer = arrArgs.Item(i).IndexOf(":") + 1
+                        FileFormat = arrArgs.Item(i).Substring(colonPlace, arrArgs.Item(i).Length - colonPlace)
+
+                    Catch e As Exception
+                        ShowHelp("File Format not correctly identified.")
+                        Exit Sub
+                    End Try
+
+                    If FileFormat.ToLower <> "xls" And FileFormat.ToLower <> "xlsx" And FileFormat.ToLower <> "csv" And FileFormat.ToLower <> "tsv" Then
+                        ShowHelp("File format provided (" & FileFormat.ToLower & ") is not available.  Options are: xls, csv or tsv.")
+                        Exit Sub
+                    End If
+
+                Case arrArgs(i).ToLower.StartsWith("/y")
+                    CarryOn = True
+
                 Case Else
-                    ShowHelp("File format not recognized")
+                    ShowHelp()
+                    Exit Sub
+
             End Select
+        Next
 
-        ElseIf arrArgs.Count = 0 Then
-            myForm.ShowDialog()
+        If Not CarryOn Then
+            Dim line As String
+            Console.WriteLine()
+            Console.WriteLine("Using Directory: " & strFolder)
+            Console.WriteLine("Using Exclusion File: " & strFile)
+            Console.WriteLine("Using Env: " & strEnv)
+            Console.WriteLine("Output File Path: " & OutputFile)
 
-        ElseIf arrArgs.Count <= 2 Then
-            ShowHelp()
-            Exit Sub
+            Do
+                Console.Write("Are these values correct? (y/n)")
+                line = Console.ReadLine()
+                If Not line.ToLower.StartsWith("y") Then
+                    Console.WriteLine("Answer is not yes... Exiting.")
+                    Exit Sub
+                End If
+            Loop While line Is Nothing
         End If
+
+        Select Case FileFormat.ToLower
+            Case "csv"
+                ConvertPlainText()
+            Case "tsv"
+                ConvertPlainText()
+            Case "xls"
+                ConvertExcel()
+            Case "xlsx"
+                ConvertExcel()
+            Case "excel"
+                ConvertExcel()
+            Case Else
+                ShowHelp("File format (" & FileFormat.ToLower & ") not recognized.")
+        End Select
+
     End Sub
 
     Public Sub ConvertExcel()
 
         ' Start Excel and get Application object.
         oExcel = CreateObject("Excel.Application")
-        oExcel.Visible = True
+        oExcel.Visible = False
         oExcel.UserControl = False
 
         AddInfoToBox("Running (Excel will be shown after completion) ... ")
@@ -237,7 +236,7 @@ Module NessusConversion
                                     AddInfoToBox("port Not Found")
                                 End Try
 
-                                'This is the spot where the false positive catalog will do its thing.
+                                'This is the spot where the exception catalog will do its thing.
                                 'Check the file for the pluginID and host variables to see if this should be printed.
 
                                 AddInfoToBox("Plugin ID: " & pluginID & "  Plugin Name: " & pluginName)
@@ -256,6 +255,8 @@ Module NessusConversion
                                 strSummary = synopsis & vbCrLf & description & vbCrLf & solution
 
                                 AddInfoToBox("Summary: " & vbCrLf & strSummary)
+
+                                'Send to Excel
                                 DoXL(pluginID, pluginName, severity, strSummary, port, host)
 
                                 'Bounce out if the user wants to stop the madness.
@@ -389,11 +390,24 @@ Module NessusConversion
 
         AddInfoToBox("Selecting Sheet " & ThisSheet)
 
+        'Parsing out the Compliance Report
+
+        'If pluginID = Configuration.ConfigurationManager.AppSettings("ComplianceAuditIDWindows") _
+        '    Or pluginID = Configuration.ConfigurationManager.AppSettings("ComplianceAuditIDUnix") Then
+
+        '    'Begin custom handling of Audit Report
+        '    AddInfoToBox("This result is a compliance check")
+
+
+
+        'Else
         oExcel.Cells(RowCount(ThisSheet), 1).Value = pluginID
 
         Select Case severity
-            Case 3
+            Case 4
                 severityName = "Critical"
+            Case 3
+                severityName = "High"
             Case 2
                 severityName = "Medium"
             Case 1
@@ -425,6 +439,7 @@ Module NessusConversion
         If ThisSheet = 3 Then
             oExcel.Cells(RowCount(ThisSheet), 8).Value = Justification
         End If
+        'End If
 
         RowCount(ThisSheet) += 1
     End Sub
@@ -523,7 +538,7 @@ Module NessusConversion
                                                                  Version:=Excel.XlPivotTableVersionList.xlPivotTableVersion14)
 
         Dim myPivots As Excel.PivotTables = xlDestWSheet.PivotTables
-        Dim ptTable As Excel.PivotTable = myPivots.Add(PivotCache:=ptCache, TableDestination:=xlDestRange) 
+        Dim ptTable As Excel.PivotTable = myPivots.Add(PivotCache:=ptCache, TableDestination:=xlDestRange)
 
         oExcel.Sheets(1).Select()
 
