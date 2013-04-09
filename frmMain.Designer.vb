@@ -277,6 +277,7 @@ Partial Class frmMain
         '
         'btnJustify
         '
+        Me.btnJustify.Enabled = False
         Me.btnJustify.Location = New System.Drawing.Point(12, 285)
         Me.btnJustify.Name = "btnJustify"
         Me.btnJustify.Size = New System.Drawing.Size(271, 23)
@@ -301,7 +302,7 @@ Partial Class frmMain
         Me.Controls.Add(Me.MenuStrip1)
         Me.MainMenuStrip = Me.MenuStrip1
         Me.Name = "frmMain"
-        Me.Text = "Nessus to Excel Converter"
+        Me.Text = "Nessus Conversion"
         Me.ToolStrip1.ResumeLayout(False)
         Me.ToolStrip1.PerformLayout()
         Me.MenuStrip1.ResumeLayout(False)

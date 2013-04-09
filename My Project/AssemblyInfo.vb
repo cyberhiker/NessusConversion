@@ -10,11 +10,11 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("Nessus To Excel")> 
+<Assembly: AssemblyTitle("Nessus Conversion Utility")> 
 <Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("BNYMellon")> 
-<Assembly: AssemblyProduct("Nessus To Excel")> 
-<Assembly: AssemblyCopyright("Copyright ©  2012")> 
+<Assembly: AssemblyCompany("RedEyeTek, LLC")> 
+<Assembly: AssemblyProduct("Nessus Conversion Utility")> 
+<Assembly: AssemblyCopyright("Copyright ©  2013")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)> 

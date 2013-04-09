@@ -41,8 +41,9 @@ Public Class frmMain
         End If
 
         If Not File.Exists(dlgCatalogSelect.FileName) Then
-            MsgBox("RAFON/FP File Doesn't Exist", MsgBoxStyle.Exclamation, "File Error")
-            AddInfoToBox("RAFON/FP File Doesn't Exist")
+            MsgBox("Exceptions File Doesn't Exist, we won't use one.", MsgBoxStyle.Exclamation, "File Error")
+            AddInfoToBox("Exceptions File Doesn't Exist, we won't use one.")
+            NessusConversion.strFile = ""
             'Exit Sub
         Else
             NessusConversion.strFile = dlgCatalogSelect.FileName
@@ -65,10 +66,16 @@ Public Class frmMain
             Exit Sub
         End If
 
+        AddInfoToBox(FileFormat)
+
         Select Case FileFormat.ToLower
-            Case "csv" Or "tsv"
+            Case "csv"
                 t = New Thread(AddressOf NessusConversion.ConvertPlainText)
-            Case "xls" Or "xlsx"
+            Case "tsv"
+                t = New Thread(AddressOf NessusConversion.ConvertPlainText)
+            Case "xls"
+                t = New Thread(AddressOf NessusConversion.ConvertExcel)
+            Case "xlsx"
                 t = New Thread(AddressOf NessusConversion.ConvertExcel)
             Case Else
                 AddInfoToBox("File format not recognized")
@@ -79,14 +86,14 @@ Public Class frmMain
     End Sub
 
     Private Sub AboutToolStripMenuItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AboutToolStripMenuItem1.Click
-        Dim AboutBox1 As New NessusToExcel.AboutBox1
+        Dim AboutBox1 As New AboutBox1
         AboutBox1.ShowDialog()
     End Sub
 
     Private Sub ToolStripButton2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripButton2.Click
         dlgCatalogSelect.ShowDialog()
         strFile = dlgCatalogSelect.FileName
-        AddInfoToBox("RAFON/FP Catalog is: " & strFile)
+        AddInfoToBox("Exceptions Catalog is: " & strFile)
         dlgCatalogSelect.Dispose()
     End Sub
 
@@ -108,5 +115,10 @@ Public Class frmMain
     Private Sub Text1_Change() Handles txtStatus.TextChanged
         txtStatus.SelectionStart = Len(txtStatus.Text)
         txtStatus.SelectionLength = 0
+    End Sub
+
+    Private Sub ExitToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ExitToolStripMenuItem.Click
+        System.Windows.Forms.Application.Exit()
+
     End Sub
 End Class
