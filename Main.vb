@@ -292,12 +292,17 @@ Module NessusConversion
             If File.Exists(OutputFile) Then
                 File.Delete(OutputFile)
             End If
-            oWB.SaveAs(OutputFile)
-            oWB.Close()
-            oWB = Nothing
-            oExcel.Quit()
+            If Not OutputFile = "" Then
+                oWB.SaveAs(OutputFile)
+                oWB.Close()
+                oWB = Nothing
+                oExcel.Quit()
 
-        Else 'If not display the spreadsheet and let them handle it.
+            Else 'If not display the spreadsheet and let them handle it.
+                oExcel.Visible = True
+
+            End If
+        Else
             oExcel.Visible = True
         End If
 
@@ -341,6 +346,12 @@ Module NessusConversion
         oExcel.Cells(RowCount(intSheet), Column).Value = "Affected System"
         Column = Column + 1
         oExcel.Cells(RowCount(intSheet), Column).Value = "Lookup"
+        Column = Column + 1
+        oExcel.Cells(RowCount(intSheet), Column).Value = "Exclusion Justification"
+        Column = Column + 1
+        oExcel.Cells(RowCount(intSheet), Column).Value = "Discovery Date"
+        Column = Column + 1
+        oExcel.Cells(RowCount(intSheet), Column).Value = "Expiration Date"
 
         oExcel.Columns("A:A").ColumnWidth = 10.0
         oExcel.Columns("B:B").ColumnWidth = 10.0
@@ -349,16 +360,13 @@ Module NessusConversion
         oExcel.Columns("E:E").ColumnWidth = 20.0
         oExcel.Columns("F:F").ColumnWidth = 20.0
         oExcel.Columns("G:G").ColumnWidth = 10.0
-
-        If intSheet = 3 Then
-            Column = Column + 1
-            oExcel.Cells(RowCount(intSheet), Column).Value = "Exclusion Justification"
-            oExcel.Columns("H:H").ColumnWidth = 52
-        End If
+        oExcel.Columns("H:H").ColumnWidth = 52
+        oExcel.Columns("I:I").ColumnWidth = 20.0
+        oExcel.Columns("J:J").ColumnWidth = 20.0
 
         RowCount(intSheet) += 1
 
-        oExcel.Columns("A:H").Select()
+        oExcel.Columns("A:J").Select()
         oExcel.Range("A2").Activate()
         oExcel.Range("A2").Select()
         oExcel.ActiveWindow.FreezePanes = True
@@ -373,16 +381,16 @@ Module NessusConversion
 
         'CheckXML will return text if this finding is in the catalog
         Dim Justification As String = String.Empty
+        Dim ExpirationDate As Date = "12/31/2099", DiscoveryDate As Date = "01/01/1970"
 
-        If strFile <> "" Then
-            Justification = CheckExceptionsXML(pluginID, port, AffectedSystem)
+        If strFile <> "" And CheckExceptionsXML(pluginID, port, AffectedSystem).Contains("||") Then
+            Justification = Split(CheckExceptionsXML(pluginID, port, AffectedSystem), "||")(0)
+            DiscoveryDate = Split(CheckExceptionsXML(pluginID, port, AffectedSystem), "||")(1)
+            ExpirationDate = Split(CheckExceptionsXML(pluginID, port, AffectedSystem), "||")(2)
         End If
 
-        If Justification <> String.Empty And Justification <> "-1" Then
+        If Justification <> String.Empty And Justification <> "-1" And ExpirationDate > Now Then
             ThisSheet = 3
-
-            'ElseIf Justification <> "-1" Then
-            '    Exit Sub
 
         Else
             If severity <= 1 Then
@@ -431,6 +439,18 @@ Module NessusConversion
         oExcel.Cells(RowCount(ThisSheet), 5).Value = port
         oExcel.Cells(RowCount(ThisSheet), 6).Value = AffectedSystem
         oExcel.Cells(RowCount(ThisSheet), 7).Value = "Lookup"
+        oExcel.Cells(RowCount(ThisSheet), 8).Value = Justification
+
+        If DiscoveryDate <> "01/01/1970" And Not IsNothing(DiscoveryDate) Then
+            Debug.Print("Discovery Date " & DiscoveryDate)
+            oExcel.Cells(RowCount(ThisSheet), 9).Value = DiscoveryDate
+        End If
+
+        If ExpirationDate <> "12/31/2099" And Not IsNothing(ExpirationDate) Then
+            Debug.Print("Expiration Date: " & ExpirationDate)
+            oExcel.Cells(RowCount(ThisSheet), 10).Value = ExpirationDate
+        End If
+
         oRng = oExcel.Range("G" & RowCount(ThisSheet))
 
         Try
@@ -441,12 +461,6 @@ Module NessusConversion
             MsgBox("Hyperlink could not be added.", MsgBoxStyle.Exclamation, "Excel Error")
             AddInfoToBox(ex.Message)
         End Try
-
-        'If this is a finding with a justification, enter that justification on the sheet.
-        If ThisSheet = 3 Then
-            oExcel.Cells(RowCount(ThisSheet), 8).Value = Justification
-        End If
-        'End If
 
         RowCount(ThisSheet) += 1
     End Sub
@@ -474,7 +488,7 @@ Module NessusConversion
             Case 2
                 SheetName = SheetName & " - Low"
             Case 3
-                SheetName = SheetName & " - RAFON or FP"
+                SheetName = SheetName & " - Exceptions"
             Case Else
                 AddInfoToBox("Incorrect Sheet Reference")
                 Exit Sub
@@ -693,13 +707,27 @@ Module NessusConversion
                                                                       "' and @ipaddress='" & thisIP & "']")
 
             Dim ReturnText As String = String.Empty
+            Dim ExpirationDate, DiscoveryDate As Date
 
             'Ensure that there is something to look at
             If xmlExceptions.Count > 0 Then
 
                 'Should be only one, but there maybe more.  Take the last one.
                 For Each myNode As XmlNode In xmlExceptions
-                    ReturnText = myNode.InnerText
+
+                    Try
+                        DiscoveryDate = myNode.Attributes("disdate").Value
+                    Catch ex As Exception
+                        DiscoveryDate = "01/01/1970"
+                    End Try
+
+                    Try
+                        ExpirationDate = myNode.Attributes("expdate").Value
+                    Catch ex As Exception
+                        ExpirationDate = "12/31/2099"
+                    End Try
+
+                    ReturnText = myNode.InnerText & "||" & DiscoveryDate & "||" & ExpirationDate
                 Next
 
             End If
